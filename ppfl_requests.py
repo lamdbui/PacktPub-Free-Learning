@@ -6,7 +6,8 @@ import os
 
 BASE_URL = "https://www.packtpub.com"
 FREE_LEARNING_PATH = "/packt/offers/free-learning"
-#https://www.packtpub.com/freelearning-claim/21460/21478
+MY_BOOKS_PATH = "/account/my-ebooks"
+
 # 'packtpub.json' config defaults
 username = ''
 password = ''
@@ -28,21 +29,34 @@ data = {'email': username,
 
 FREE_LEARNING_URL = BASE_URL + FREE_LEARNING_PATH
 
-r = requests.get(FREE_LEARNING_URL, headers=headers)
+session = requests.Session()
+
+r = session.get(FREE_LEARNING_URL, headers=headers)
 print(r)
 
-p = requests.post(FREE_LEARNING_URL, headers=headers, data=data)
+p = session.post(FREE_LEARNING_URL, headers=headers, data=data)
 print(p)
 
 cookies = p.cookies
 print(cookies)
-#r = requests.get(FREE_LEARNING_URL, headers=headers, cookies=cookies)
-#print(r.text)
+
 soup = BeautifulSoup(r.text, 'html.parser')
-links = [a.attrs.get('href') for a in soup.select('div.free-ebook a[href^=]')]
+book_title = soup.find('div', { 'class': 'dotd-title'}).find('h2').text.strip()
+print(book_title)
+#links = [a.attrs.get('href') for a in soup.select('div.free-ebook a[href^=]')]
+link = soup.find('div', {'class': 'free-ebook'}).find('a').attrs.get('href')
+print(link)
 
-print(links)
-print(BASE_URL + links[0])
+#print(links)
+#print(BASE_URL + links[0])
 
-r = requests.get(BASE_URL + links[0], headers=headers, cookies=cookies)
+r = session.get(BASE_URL + link, headers=headers, cookies=cookies)
 print(r)
+
+r = session.get(BASE_URL + MY_BOOKS_PATH, headers=headers, cookies=cookies)
+print(r)
+
+if book_title in r.text:
+    print("*** SUCCESSFULLY ADDED BOOK - {} ***".format(book_title))
+else:
+    print("*** FAILED TO ADD BOOK ***")
