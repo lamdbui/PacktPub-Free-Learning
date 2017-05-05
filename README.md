@@ -1,6 +1,11 @@
-# PacktPub Free Learning Automator
+# PacktPub Free Learning Automation Scripts
 
-Experimental Selenium script to login to PacktPub and get the free book of the day.
+Experimental scripts used to login to PacktPub and get the free book of the day.
+
+Different implementations with the following methods
+
+- [Selenium](http://www.seleniumhq.org/)
+- [requests](https://github.com/kennethreitz/requests)
 
 ## Configuration
 
