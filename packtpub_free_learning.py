@@ -12,7 +12,6 @@ username = ''
 password = ''
 
 home_dir = os.path.expanduser('~')
-#print("*** HOME_DIR: {}".format(home_dir))
 
 with open(home_dir + "/packtpub.json") as json_config:
     credentials = json.load(json_config)
@@ -26,11 +25,10 @@ assert "Free Learning" in driver.title
 try:
     # stash the book title to check that we saved it
     book_title = driver.find_element_by_class_name('dotd-title').text
+    assert book_title is not None
 
     free_book_submit = driver.find_element_by_class_name('book-claim-token-inner')
     free_book_submit.click()
-
-    #print("*** BOOK TITLE: {}".format(book_title))
     
     # have to access hidden elements this way, since we're unable to send keys to elements
     driver.execute_script("document.getElementById('email').value='{}'".format(username))
@@ -45,12 +43,9 @@ try:
 
     account_ebooks = driver.find_element_by_id('account-right-content')
 
-    #print("*** ACCOUNT EBOOKS: {}".format(account_ebooks.text))
-
     if book_title in account_ebooks.text:
         print("*** SUCCESSFULLY ADDED BOOK - {} ***".format(book_title))
     else:
         print("*** FAILED TO ADD BOOK  ***")
 finally:
     driver.close()
-

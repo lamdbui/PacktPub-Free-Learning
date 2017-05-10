@@ -6,6 +6,7 @@ import os
 
 BASE_URL = "https://www.packtpub.com"
 FREE_LEARNING_PATH = "/packt/offers/free-learning"
+FREE_LEARNING_URL = BASE_URL + FREE_LEARNING_PATH
 MY_BOOKS_PATH = "/account/my-ebooks"
 
 # 'packtpub.json' config defaults
@@ -27,34 +28,33 @@ data = {'email': username,
         'form_build_id': 'form-a4f21aad8abbce3e5fb251a7f820c806',
         'form_id': 'packt_user_login_form'}
 
-FREE_LEARNING_URL = BASE_URL + FREE_LEARNING_PATH
-
+# create a session to work with throughout the process
 session = requests.Session()
 
 r = session.get(FREE_LEARNING_URL, headers=headers)
-print(r)
+assert r.status_code == 200
 
 p = session.post(FREE_LEARNING_URL, headers=headers, data=data)
-print(p)
+assert p.status_code == 200
 
 cookies = p.cookies
-print(cookies)
+assert cookies is not None
 
+# find out free book title and get the URL(changes daily) for the free book
 soup = BeautifulSoup(r.text, 'html.parser')
 book_title = soup.find('div', { 'class': 'dotd-title'}).find('h2').text.strip()
-print(book_title)
-#links = [a.attrs.get('href') for a in soup.select('div.free-ebook a[href^=]')]
+assert book_title is not None
+print("Free Book of the Day - {}".format(book_title))
 link = soup.find('div', {'class': 'free-ebook'}).find('a').attrs.get('href')
-print(link)
+assert link is not None
 
-#print(links)
-#print(BASE_URL + links[0])
-
+# get our free book
 r = session.get(BASE_URL + link, headers=headers, cookies=cookies)
-print(r)
+assert r.status_code == 200
 
+# view our Account page and check that the book exists in our list
 r = session.get(BASE_URL + MY_BOOKS_PATH, headers=headers, cookies=cookies)
-print(r)
+assert r.status_code == 200
 
 if book_title in r.text:
     print("*** SUCCESSFULLY ADDED BOOK - {} ***".format(book_title))
