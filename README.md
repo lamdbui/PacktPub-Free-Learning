@@ -24,3 +24,10 @@ NOTE: make sure to set permissions for packtpub.json to only allow access by fil
 ~~~
 chmod 0600 ~/packtpub.json
 ~~~
+
+## Usage
+
+Run the scripts with the following command:
+~~~
+python <selected_script.py>
+~~~
